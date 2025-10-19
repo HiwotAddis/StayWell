@@ -3,6 +3,11 @@ import { Webhook } from "svix";
 
 const clerkWebhooks = async (req, res) => {
     try {
+        // Only allow POST requests for webhooks
+        if (req.method !== 'POST') {
+            return res.status(405).json({ success: false, message: 'Method not allowed' });
+        }
+
         // Create a Svix instance with clerk webhook secret.
         const whook = new Webhook(process.env.CLERK_WEBHOOK_SECRET)
 
@@ -47,8 +52,8 @@ const clerkWebhooks = async (req, res) => {
         res.json({success: true, message: "Webhook Received"});
 
     } catch (error) {
-        console.log(error,message);
-        res.json({success: false, message: error.message});
+        console.log("Webhook error:", error.message);
+        res.status(500).json({success: false, message: error.message});
     }
 }
 
