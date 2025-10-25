@@ -12,7 +12,7 @@ const MyBookings = () => {
     try {
       const { data } = await axios.get("/api/bookings/user", {
         headers: {
-          Authorization: `Bearer ${getToken()}`,
+          Authorization: `Bearer ${await getToken()}`,
         },
       });
       if (data.success) {
