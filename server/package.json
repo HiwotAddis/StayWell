@@ -20,6 +20,7 @@
     "mongodb": "^6.19.0",
     "mongoose": "^8.18.1",
     "multer": "^2.0.2",
+    "nodemailer": "^7.0.10",
     "svix": "^1.76.1"
   },
   "devDependencies": {
