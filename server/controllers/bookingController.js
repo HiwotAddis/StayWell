@@ -68,7 +68,7 @@ export const createBooking = async (req, res) => {
       guests: +guests,
       checkInDate,
       checkOutDate,
-      totalprice,
+      totalPrice: totalprice,
     });
     res.json({ success: true, message: "Booking created successfully" });
   } catch (error) {
@@ -94,7 +94,7 @@ export const getUserBookings = async (req, res) => {
 
 export const getHotelBookings = async (req, res) => {
   try {
-    const hotel = await Hotel.findOne({ owner: req.auth.user._id });
+    const hotel = await Hotel.findOne({ owner: req.user._id });
     if (!hotel) {
       return res.json({ success: false, message: "No hotel found" });
     }
@@ -105,7 +105,7 @@ export const getHotelBookings = async (req, res) => {
     const totalBookings = bookings.length;
     //total revenue
     const totalRevenue = bookings.reduce(
-      (acc, booking) => acc + booking.totalprice,
+      (acc, booking) => acc + booking.totalPrice,
       0
     );
     res.json({
