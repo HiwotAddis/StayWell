@@ -68,7 +68,7 @@ export const createBooking = async (req, res) => {
       guests: +guests,
       checkInDate,
       checkOutDate,
-      totalprice,
+      totalPrice: totalprice,
     });
     res.json({ success: true, message: "Booking created successfully" });
   } catch (error) {
@@ -105,7 +105,7 @@ export const getHotelBookings = async (req, res) => {
     const totalBookings = bookings.length;
     //total revenue
     const totalRevenue = bookings.reduce(
-      (acc, booking) => acc + booking.totalprice,
+      (acc, booking) => acc + booking.totalPrice,
       0
     );
     res.json({
