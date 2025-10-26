@@ -7,7 +7,7 @@ import { useAppContext } from "../context/AppContext";
 import toast from "react-hot-toast";
 const RoomDetails = () => {
   const { id } = useParams();
-  const { rooms, getToken, axios, navigate } = useAppContext();
+  const { rooms, axios, navigate } = useAppContext();
   const [room, setRoom] = useState(null);
   const [mainImage, setMainImage] = useState(null);
   const [checkInDate, setCheckInDate] = useState(null);
@@ -59,11 +59,6 @@ const RoomDetails = () => {
             checkOutDate,
             guests,
             paymentMethod: "Pay At Hotel",
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${await getToken()}`,
-            },
           }
         );
         if (data.success) {
