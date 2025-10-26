@@ -14,11 +14,25 @@ connectDB();
 connectCloudinary();
 
 const app = express();
-app.use(cors()); // Enable Cross-Origin Resource Sharing
+
+// CORS configuration
+const corsOptions = {
+  origin: process.env.FRONTEND_URL || "*",
+  credentials: true,
+  optionsSuccessStatus: 200
+};
+app.use(cors(corsOptions));
 
 // Middleware
 app.use(express.json());
-app.use(clerkMiddleware());
+
+// Configure Clerk middleware with secret key
+if (!process.env.CLERK_SECRET_KEY) {
+  console.error("Warning: CLERK_SECRET_KEY is not set in environment variables");
+}
+app.use(clerkMiddleware({
+  secretKey: process.env.CLERK_SECRET_KEY
+}));
 
 // API to listen to Clerk Webhooks
 app.use("/api/clerk", clerkWebhooks);

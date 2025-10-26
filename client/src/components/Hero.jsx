@@ -3,7 +3,7 @@ import { assets, cities } from "../assets/assets";
 import { useAppContext } from "../context/AppContext";
 
 const Hero = () => {
-  const { navigate, getToken, axios, setSearchedCities } = useAppContext();
+  const { navigate, axios, setSearchedCities } = useAppContext();
   const [destination, setDestination] = useState("");
 
   const onSearch = async (e) => {
@@ -12,10 +12,7 @@ const Hero = () => {
     //call api to save searched city
     await axios.post(
       "/api/user/store-recent-search",
-      { recentSearchedCity: destination },
-      {
-        headers: { Authorization: `Bearer ${await getToken()}` },
-      }
+      { recentSearchedCity: destination }
     );
     //// add destination to searchedCities max 3 recent searched cities
     setSearchedCities((prevSearchedCities) => {

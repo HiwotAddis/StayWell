@@ -5,23 +5,19 @@ import toast from "react-hot-toast";
 
 const ListRoom = () => {
   const [rooms, setRooms] = useState([]);
-  const { axios, getToken, user, currency } = useAppContext();
+  const { axios, user, currency } = useAppContext();
 
   // fetch rooms of the hotel owner
   const fetchRooms = async () => {
     try {
-      const { data } = await axios.get("/api/rooms/owner/", {
-        headers: {
-          Authorization: `Bearer ${await getToken()}`,
-        },
-      });
+      const { data } = await axios.get("/api/rooms/owner/");
       if (data.success) {
         setRooms(data.rooms);
       } else {
         toast.error(data.message);
       }
     } catch (error) {
-      toast.error(error.message);
+      toast.error(error.response?.data?.message || error.message);
     }
   };
 
@@ -31,11 +27,6 @@ const ListRoom = () => {
       "/api/rooms/toggle-availability",
       {
         roomId,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${await getToken()}`,
-        },
       }
     );
     if (data.success) {

@@ -4,7 +4,7 @@ import { useAppContext } from "../context/AppContext";
 import toast from "react-hot-toast";
 
 const HotelReg = () => {
-  const { setShowHotelReg, axios, getToken, setIsOwner } = useAppContext();
+  const { setShowHotelReg, axios, setIsOwner } = useAppContext();
 
   const [name, setName] = useState("");
   const [address, setAddress] = useState("");
@@ -21,11 +21,6 @@ const HotelReg = () => {
           address,
           contact,
           city,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${await getToken()}`,
-          },
         }
       );
       if (data.success) {

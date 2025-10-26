@@ -6,12 +6,40 @@ import { toast } from "react-hot-toast";
 
 axios.defaults.baseURL = import.meta.env.VITE_BACKEND_URL;
 
+// Set up axios interceptor for automatic token attachment
+let getTokenFunction = null;
+
+// Interceptor to attach auth token to all requests
+axios.interceptors.request.use(
+  async (config) => {
+    if (getTokenFunction) {
+      try {
+        const token = await getTokenFunction();
+        if (token) {
+          config.headers.Authorization = `Bearer ${token}`;
+        }
+      } catch (error) {
+        console.error("Failed to get token:", error);
+      }
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
 const AppContext = createContext();
 export const AppProvider = ({ children }) => {
   const currency = import.meta.env.VITE_CURRENCY || "$";
   const navigate = useNavigate();
   const { user } = useUser();
   const { getToken } = useAuth();
+  
+  // Set the getToken function for the interceptor
+  useEffect(() => {
+    getTokenFunction = getToken;
+  }, [getToken]);
 
   const [isOwner, setIsOwner] = useState(false);
   const [showHotelReg, setShowHotelReg] = useState(false);
@@ -33,9 +61,7 @@ export const AppProvider = ({ children }) => {
 
   const fetchUser = async () => {
     try {
-      const { data } = await axios.get("/api/user", {
-        headers: { Authorization: `Bearer ${await getToken()}` },
-      });
+      const { data } = await axios.get("/api/user");
       if (data.success) {
         setIsOwner(data.role === "hotelOwner");
         setSearchedCities(data.recentSearchedCities);
@@ -46,7 +72,8 @@ export const AppProvider = ({ children }) => {
         }, 5000);
       }
     } catch (error) {
-      toast.error(error.message);
+      console.error("Error fetching user:", error);
+      toast.error(error.response?.data?.message || error.message);
     }
   };
   useEffect(() => {

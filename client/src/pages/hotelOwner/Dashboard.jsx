@@ -4,7 +4,7 @@ import { useAppContext } from "../../context/AppContext";
 import { assets } from "../../assets/assets";
 
 const Dashboard = () => {
-  const { currency, user, toast, axios, getToken } = useAppContext();
+  const { currency, user, toast, axios } = useAppContext();
   const [dashboardData, setDashboardData] = useState({
     bookings: [],
     totalBookings: 0,
@@ -12,18 +12,14 @@ const Dashboard = () => {
   });
   const fetchDashboardData = async () => {
     try {
-      const { data } = await axios.get("/api/bookings/hotel", {
-        headers: {
-          Authorization: `Bearer ${await getToken()}`,
-        },
-      });
+      const { data } = await axios.get("/api/bookings/hotel");
       if (data.success) {
         setDashboardData(data.dashboardData);
       } else {
         toast.error(data.message);
       }
     } catch (error) {
-      toast.error(error.message);
+      toast.error(error.response?.data?.message || error.message);
     }
   };
 
