@@ -9,6 +9,7 @@ import hotelRouter from "./routes/hotelRoutes.js";
 import connectCloudinary from "./configs/cloudinary.js";
 import roomRouter from "./routes/roomRoutes.js";
 import bookingRouter from "./routes/bookingRoutes.js";
+import { stripeWebhooks } from "./controllers/stripeWebhooks.js";
 
 connectDB();
 connectCloudinary();
@@ -19,20 +20,30 @@ const app = express();
 const corsOptions = {
   origin: process.env.FRONTEND_URL || "*",
   credentials: true,
-  optionsSuccessStatus: 200
+  optionsSuccessStatus: 200,
 };
 app.use(cors(corsOptions));
 
+//API to listen to Stripe Webhooks
+app.post(
+  "/api/stripe",
+  express.raw({ type: "application/json" }),
+  stripeWebhooks
+);
 // Middleware
 app.use(express.json());
 
 // Configure Clerk middleware with secret key
 if (!process.env.CLERK_SECRET_KEY) {
-  console.error("Warning: CLERK_SECRET_KEY is not set in environment variables");
+  console.error(
+    "Warning: CLERK_SECRET_KEY is not set in environment variables"
+  );
 }
-app.use(clerkMiddleware({
-  secretKey: process.env.CLERK_SECRET_KEY
-}));
+app.use(
+  clerkMiddleware({
+    secretKey: process.env.CLERK_SECRET_KEY,
+  })
+);
 
 // API to listen to Clerk Webhooks
 app.use("/api/clerk", clerkWebhooks);
